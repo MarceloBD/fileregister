@@ -3,8 +3,7 @@
 
     #include <stdio.h>
 
-    #define fileName "Registros.txt"
-    #define tamRegistro 37
+    #define rgtLength_t 37
 
     struct registerFields {
             char name[10];
@@ -13,10 +12,11 @@
             char price[4];
     };
 
+    const char FILENAME[] = "Registers.txt";
 
-    void newRegister(void); //Cria novo cadastro
-    void readRegister(int); //Busca o cadastro
-    void action(void); // Gerencia açoes de cadastro e de busca
-    int getTamanho(void); // Procura tamanho do arquivo
-    int exists(const char*); //Verifica se o arquivo existe
+    void newRegister(void);
+    void readRegister(int);
+    void action(void);
+    int getTamanho(void);
+    int exists(const char*);
 #endif

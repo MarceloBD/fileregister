@@ -62,41 +62,45 @@ void newRegister()
 {
     int length, RRN;
     char resposta[30];
-    struct registerFields novo;
 
-    if(!exists(fileName)){
-        FILE *create=fopen(fileName, "w+" );
+    struct registerFields newRgt;
+
+    if(!exists(FILENAME)){
+        FILE *create = fopen(FILENAME , "w+" );
         fclose(create);
     }
 
-    FILE *fp=fopen( fileName,"r+" );
+    FILE *fp = fopen( FILENAME ,"r+" );
 
     fseek(fp, 0, SEEK_END);
     length = ftell(fp);
 
-    RRN= length/tamRegistro;
+    RRN = length/rgtLength_t;
 
     printf("\nName (10): ");
-    scanf("%s",&novo.name);
-    fseek ( fp , 0+tamRegistro*RRN , SEEK_SET );
-    fprintf(fp, "%s", novo.name);
+    scanf("%s",&newRgt.name);
+    fseek ( fp , 0+rgtLength_t*RRN , SEEK_SET );
+    fwrite(newRgt.name , 1 , sizeof(newRgt.name), fp);
 
     printf("Brand (10): ");
-    scanf("%s",&novo.brand);
-    fseek ( fp , 10+37*RRN , SEEK_SET );
-    fprintf(fp, "%s", novo.brand);
+    scanf("%s",&newRgt.brand);
+    fseek ( fp , 10+rgtLength_t*RRN , SEEK_SET );
+    fwrite(newRgt.brand , 1 , sizeof(newRgt.brand), fp);
+
 
     printf("Ean13 (13): ");
-    scanf("%s",&novo.ean13);
-    fseek ( fp , 20+tamRegistro*RRN, SEEK_SET );
-    fprintf(fp, "%s", novo.ean13);
+    scanf("%s",&newRgt.ean13);
+    fseek ( fp , 20+rgtLength_t*RRN, SEEK_SET );
+    fwrite(newRgt.ean13 , 1 , sizeof(newRgt.ean13), fp);
+
 
     printf("Price (4): ");
-    scanf("%s",&novo.price);
-    fseek ( fp , 33+tamRegistro*RRN, SEEK_SET );
-    fprintf(fp, "%s", novo.price);
+    scanf("%s",&newRgt.price);
+    fseek ( fp , 33+rgtLength_t*RRN, SEEK_SET );
 
-    fseek ( fp , tamRegistro*(RRN+1), SEEK_SET );
+    fwrite(newRgt.price , 1 , sizeof(newRgt.price), fp);
+
+    fseek ( fp , rgtLength_t*(RRN+1), SEEK_SET );
     fprintf(fp, "%c", '0');
     fclose(fp);
 
@@ -111,10 +115,10 @@ void readRegister(int RRN){
     struct registerFields rgtFound;
     int i;
 
-    FILE *fp=fopen( fileName, "r+" );
+    FILE *fp=fopen( FILENAME, "r+" );
     fseek(fp, 0, SEEK_END);
     int length = ftell(fp);
-    length=(length/tamRegistro)-1;
+    length=(length/rgtLength_t)-1;
 
     if(RRN>length){
         printf("\nInvalid register \n");
@@ -124,45 +128,42 @@ void readRegister(int RRN){
 
     printf("----------------\n");
 
-    fseek(fp,0+RRN*tamRegistro,SEEK_SET);
-    printf("Nome: ");
-    for(i=0;i<10;i++){
-        fscanf(fp,"%c", &rgtFound.name[i]);
-        printf("%c",rgtFound.name[i]);
-    }
+    fseek(fp,0+RRN*rgtLength_t,SEEK_SET);
+    printf("Name: ");
+    fread(rgtFound.name , 1 , sizeof(rgtFound.name), fp);
+    printf("%s",rgtFound.name);
 
-    fseek(fp,10+RRN*tamRegistro,SEEK_SET);
-    printf("\nMarca: ");
-    for(i=0;i<10;i++){
-            fscanf(fp,"%c", &rgtFound.brand[i]);
-            printf("%c",rgtFound.brand[i]);
-    }
+    fseek(fp,10+RRN*rgtLength_t,SEEK_SET);
+    printf("\nBrand: ");
+    fread(rgtFound.brand , 1 , sizeof(rgtFound.brand), fp);
+    printf("%s",rgtFound.brand);
+
 
     printf("\nEan13: ");
-    fseek(fp,20+RRN*tamRegistro,SEEK_SET);
-    for(i=0;i<13;i++){
-            fscanf(fp,"%c", &rgtFound.ean13[i]);
-            printf("%c",rgtFound.ean13[i]);
+    fseek(fp,20+RRN*rgtLength_t,SEEK_SET);
 
-    }
-    fseek(fp,33+RRN*tamRegistro,SEEK_SET);
-    printf("\nValor: ");
-    for(i=0;i<4;i++){
-            fscanf(fp,"%c", &rgtFound.price[i]);
-            if(rgtFound.price[i]!=' ')
-                printf("%c",rgtFound.price[i]);
-    }
+    fread(rgtFound.ean13 , 1 , sizeof(rgtFound.ean13), fp);
+    printf("%s",rgtFound.ean13);
+
+
+    fseek(fp,33+RRN*rgtLength_t,SEEK_SET);
+    printf("\nPrice: ");
+
+    fread(rgtFound.price , 1 , sizeof(rgtFound.price), fp);
+    printf("%s",rgtFound.price);
+
     printf("\n----------------");
 
     fclose(fp);
   }
 
 
-int fileLength(){
-        FILE *fp=fopen( fileName, "r+" );
+int fileLength()
+{
+        FILE *fp=fopen( FILENAME, "r+" );
         fseek(fp, 0, SEEK_END);
         int length = ftell(fp);
-        length=(length/tamRegistro)-1;
+        length=(length/rgtLength_t)-1;
         return length;
 }
 
